@@ -1,0 +1,33 @@
+function generateThresholdSequence(num, threshold, errorCallback, aboveThresholdCallback, errorAboveThreshold, difference = 2) {
+    // 1. Validate num: must be greater than or equal to 1
+    if (num < 1) {
+        return errorCallback("Invalid input: number must be greater than or equal to 1");
+    }
+
+    // 2. Validate threshold: must be a valid number
+    if (typeof threshold !== 'number' || isNaN(threshold)) {
+        return errorCallback("Invalid input: threshold must be a valid number");
+    }
+
+    // 3. Generate the sequence
+    // Iterate from 0 to num - 1, multiplying current index by difference
+    let sequence = [];
+    for (let i = 0; i < num; i++) {
+        sequence.push(i * difference);
+    }
+
+    // 4. Filter the sequence for numbers greater than threshold
+    let filteredNumbers = sequence.filter(n => n > threshold);
+
+    // 5. Handle empty filtered results
+    if (filteredNumbers.length === 0) {
+        return errorAboveThreshold(`No numbers found above the threshold ${threshold}`);
+    }
+
+    // 6. Invoke success callback with formatted message
+    // Join numbers by commas as per requirement
+    return aboveThresholdCallback(`Numbers greater than ${threshold} are: ${filteredNumbers.join(', ')}`);
+}
+
+// Export the function for evaluation
+module.exports = { generateThresholdSequence };
