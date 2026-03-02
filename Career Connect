@@ -1,0 +1,64 @@
+const axios = require('axios');
+
+/**
+ * Requirement: Fetches data from API and filters by occupation using a Promise.
+ */
+function fetchApplicantsByOccupation(occupation) {
+    const url = 'https://webapps.tekstac.com/WebProjects/PersonService/viewPersonListJSON';
+    
+    return new Promise((resolve, reject) => {
+        axios.get(url)
+            .then(response => {
+                const applicants = response.data;
+                // Filter the list by the occupation property
+                const filtered = applicants.filter(person => person.occupation === occupation);
+                
+                if (filtered.length > 0) {
+                    resolve(filtered);
+                } else {
+                    reject(`No applicant found with occupation ${occupation}`);
+                }
+            })
+            .catch(error => {
+                reject(error.message);
+            });
+    });
+}
+
+/**
+ * Requirement: Async function to await fetch result and extract IDs.
+ */
+async function extractIdsByOccupation(occupation) {
+    try {
+        const applicants = await fetchApplicantsByOccupation(occupation);
+        // Map the array of objects to an array of just IDs
+        return applicants.map(app => app.id);
+    } catch (error) {
+        // Requirement: Throw an error if response fails
+        throw error;
+    }
+}
+
+/**
+ * Requirement: Async function to return the formatted result string.
+ */
+async function showIdsByOccupation(occupation) {
+    try {
+        const ids = await extractIdsByOccupation(occupation);
+        // Requirement format: "Ids for occupation <<occupation>> : <<id>>"
+        // Joining IDs with commas for the <<id>> placeholder
+        return `Ids for occupation ${occupation} : ${ids.join(',')}`;
+    } catch (error) {
+        return error;
+    }
+}
+
+// Console Output for verification
+showIdsByOccupation('Charted Accountant').then(console.log);
+
+// Export for evaluation
+module.exports = {
+    fetchApplicantsByOccupation,
+    extractIdsByOccupation,
+    showIdsByOccupation
+};
